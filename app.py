@@ -1,5 +1,6 @@
 
 import os
+import excel_handler
 
 
 
@@ -44,4 +45,7 @@ def walkthrough(base_path,old_str,new_str):
                     #     line = line
 
 
-walkthrough(base_path,old_str,new_str)
+# walkthrough(base_path,old_str,new_str)
+open_excel = excel_handler.open_excel
+rawpath = r"C:\Users\letrananhvu\Desktop\sample\data.xlsx"
+open_excel(rawpath)
