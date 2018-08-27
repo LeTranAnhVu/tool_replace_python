@@ -16,5 +16,5 @@ def walkthrough(base_path,old_str,new_str):
                 os.renames(os.path.join(root,folder),os.path.join(root,new_folder))
                 # update new fd name
                 folders[folders.index(folder)]= new_folder
-
+print("hello")
 walkthrough(base_path,old_str,new_str)
