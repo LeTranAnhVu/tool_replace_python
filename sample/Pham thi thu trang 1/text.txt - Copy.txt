@@ -1,0 +1,5 @@
+this text is in /fd1
+this is second line
+the third line
+oh common man the last line is here
+I'll promise there is no more line after this line.
