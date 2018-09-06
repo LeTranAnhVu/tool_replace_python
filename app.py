@@ -1,51 +1,50 @@
 
 import os
 import excel_handler
+import text_handler
+open_text_and_replace = text_handler.open_text_and_replace
+open_excel_and_replace = excel_handler.open_excel_and_replace
+rawpath = r".\sample\data.xlsx"
 
-
-
-new_str = "Pham thi thu trang"
-old_str = "le tran anh vu"
-base_path = r"C:\Users\letrananhvu\Desktop\sample"
-
-def replace_folder(root,folder,old_str,new_str):
-    new_folder = folder.replace(old_str, new_str)
-    os.renames(os.path.join(root, folder), os.path.join(root, new_folder))
-    return new_folder
+new_str = "ti"
+old_str = "teo"
+base_path = r".\sample"
+list_handlers = {
+    # "docx" : open_text_and_replace,
+    "txt" : open_text_and_replace,
+    "xls" : open_excel_and_replace,
+    "xlsx" : open_excel_and_replace
+}
+def replace_name(root,name,old_str,new_str):
+    new_name = name.replace(old_str, new_str)
+    try:
+        os.renames(os.path.join(root, name), os.path.join(root, new_name))
+    except FileExistsError:
+        os.renames(os.path.join(root, name), os.path.join(root, new_name + "_" ))
+    return new_name
 
 def walkthrough(base_path,old_str,new_str):
     for root , folders , files in os.walk(base_path):
         for folder in folders:
             if(folder.find(old_str)!= -1):
-                new_folder = replace_folder(root, folder, old_str, new_str)
+                new_folder = replace_name(root, folder, old_str, new_str)
                 # update new fd name
                 folders[folders.index(folder)]= new_folder
         for file in files :
-            if(file == "hehe.xlsx"):
-                #do something
-                print("go here")
-                file_path = os.path.join(root, file)
-                new_content = ""
-                try :
-                    with open(file_path,'r') as f:
-                        new_content += (f.read()).replace(old_str,new_str)
-                        print(new_content)
-                except IOError as e:
-                    print(e)
-                try:
-                    with open(file_path,'w') as f:
-                        if(new_content != ""):
-                            f.write(new_content)
-                            print("write ok")
-                except IOError as e:
-                    print(e)
-                    # f.write("new string")
-                    # for line  in f.readlines() :
-                    #     print("line--> " , line)
-                    #     line = line
+            #do something
+            file_path = os.path.join(root, file)
+            extension = file.split(".")[-1]
+            try:
+                list_handlers[extension](file_path,old_str,new_str)
+            except KeyError:
+                print("key not found")
+            new_file = replace_name(root, file, old_str, new_str)
+            print("new file: ", new_file)
+            # update new fd name
+            files[files.index(file)] = new_file
+walkthrough(base_path,old_str,new_str)
 
 
-# walkthrough(base_path,old_str,new_str)
-open_excel = excel_handler.open_excel
-rawpath = r"C:\Users\letrananhvu\Desktop\sample\data.xlsx"
-open_excel(rawpath)
+
+
+
