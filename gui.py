@@ -1,16 +1,36 @@
 from tkinter import *
+from app import walkthrough
 
 window = Tk()
-window.geometry("500x250")
+window.geometry("400x250")
 window.title("Replace Tool")
+
+
+def overwriteLog(logObj, content):
+    # clear the log
+    txtLog.delete(1.0, END)
+    # insert new content to log
+    txtLog.insert(END, str(content) + '\n')
+
+
+def nonOverwriteLog(logObj, content):
+    # insert new content to log right behind the previous content
+    txtLog.insert(END, str(content) + '\n')
 
 
 # event handlers
 def btnReplace_Click():
+    overwriteLog(txtLog, "processing . . .")
     searchStr = txtSearch.get()
     replaceStr = txtReplace.get()
     print("searchStr: ", searchStr)
     print("replaceStr: ", replaceStr)
+
+    rootPath = txtPath.get()
+    searchStr = txtSearch.get()
+    replaceStr = txtReplace.get()
+    walkthrough(rootPath, searchStr, replaceStr)
+    nonOverwriteLog(txtLog, "finished!")
 
 
 # create form
@@ -23,30 +43,26 @@ txtSearch = Entry(window, width=30)
 txtReplace = Entry(window, width=30)
 txtLog = Text(window, width=35, height=6)
 btnReplace = Button(window, text="Replace", command=btnReplace_Click)
-# txtLog.insert(END,"Just a text Widget\nin two lines\nfjhsdjhfasdf\ndjfhksjhfksd\n")
-# layout form
+
+## layout form
+
+# path element
 lblPath.grid(row=0, column=0, sticky='w')
-lblSearch.grid(row=1, column=0, sticky='w')
-lblReplace.grid(row=2, column=0, sticky='w')
-lblLog.grid(row=4,column=0, sticky='w')
 txtPath.grid(row=0, column=1, sticky='w')
+
+# search form
+lblSearch.grid(row=1, column=0, sticky='w')
 txtSearch.grid(row=1, column=1, sticky='w')
+
+# replace form
+lblReplace.grid(row=2, column=0, sticky='w')
 txtReplace.grid(row=2, column=1, sticky='w')
+
+# log
+lblLog.grid(row=4, column=0, sticky='w')
 txtLog.grid(row=5, column=1, columnspan=2, sticky='w')
+
+# button
 btnReplace.grid(row=3, column=1, sticky='w')
-
+print(Text.__dict__)
 window.mainloop()
-
-# class MainForm:
-#     count = 0
-#     def __init__(self, name, age):
-#         self.name = name
-#         self.age = age
-#         MainForm.count += 1
-#
-#
-# form1 = MainForm("le tran anh vu", 23)
-# form2 = MainForm(None,None)
-#
-# print(form1.name, form1.age)
-# print(MainForm.__bases__)
