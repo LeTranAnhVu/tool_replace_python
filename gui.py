@@ -64,5 +64,5 @@ txtLog.grid(row=5, column=1, columnspan=2, sticky='w')
 
 # button
 btnReplace.grid(row=3, column=1, sticky='w')
-print(Text.__dict__)
+
 window.mainloop()
