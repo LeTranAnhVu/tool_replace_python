@@ -28,9 +28,9 @@ def updateLog(path,dataDict):
     # add new log to current
     if(currentDict == None or (not currentDict)):
         currentDict = {}
-        currentDict['his'] = []
+        currentDict['input'] = []
 
-    currentDict['his'].insert(0,dataDict)
+    currentDict['input'].insert(0,dataDict)
     # save grand new mass log to txt
     writeLog(path,currentDict)
 
@@ -64,6 +64,6 @@ def getLog(path):
 # writeLog("./log.txt",data)
 # getLog("./log.txt")
 # updateLog('./log.txt',data)
-for log in getLog("./log.txt")['his']:
+for log in getLog("./log.txt")['input']:
     print('log')
     print(log)

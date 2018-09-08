@@ -18,6 +18,17 @@ def nonOverwriteLog(logObj, content):
     txtLog.insert(END, str(content) + '\n')
 
 
+class inputLog:
+    def __init__(self, path, searchStr, replaceStr):
+        self.path = path
+        self.searchStr = searchStr
+        self.replaceStr = replaceStr
+        self.dictFactory()
+    def dictFactory(self):
+        print(self)
+        # make the properties to dict witht he typical key
+
+
 # event handlers
 def btnReplace_Click():
     overwriteLog(txtLog, "processing . . .")
