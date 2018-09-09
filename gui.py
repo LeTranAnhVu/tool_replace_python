@@ -1,11 +1,12 @@
 from tkinter import *
 from app import walkthrough
+from log import updateLog , getLog
 
 window = Tk()
 window.geometry("400x250")
 window.title("Replace Tool")
 
-
+CURRENT_PATH = None
 def overwriteLog(logObj, content):
     # clear the log
     txtLog.delete(1.0, END)
@@ -23,10 +24,17 @@ class inputLog:
         self.path = path
         self.searchStr = searchStr
         self.replaceStr = replaceStr
-        self.dictFactory()
+        self.inputDict = {};
+        self.inputDict = self.dictFactory()
+
     def dictFactory(self):
         print(self)
-        # make the properties to dict witht he typical key
+        # make the properties to dict with the typical key
+        return {
+            "path": self.path,
+            "search": self.searchStr,
+            "replace": self.replaceStr
+        }
 
 
 # event handlers
@@ -40,9 +48,21 @@ def btnReplace_Click():
     rootPath = txtPath.get()
     searchStr = txtSearch.get()
     replaceStr = txtReplace.get()
-    walkthrough(rootPath, searchStr, replaceStr)
+
+    # search and replace
+    # walkthrough(rootPath, searchStr, replaceStr)
+
     nonOverwriteLog(txtLog, "finished!")
 
+    # save the input information to log for the next usage
+    # create dict of information
+    inputDict = inputLog(rootPath, searchStr, replaceStr).inputDict
+    # update input log
+    updateLog(CURRENT_PATH,inputDict)
+
+
+
+# make form
 
 # create form
 lblPath = Label(window, text="Add Path")
@@ -75,5 +95,10 @@ txtLog.grid(row=5, column=1, columnspan=2, sticky='w')
 
 # button
 btnReplace.grid(row=3, column=1, sticky='w')
+
+
+# loading previous information
+
+
 
 window.mainloop()

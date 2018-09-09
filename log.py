@@ -21,25 +21,36 @@ import json
 # }
 
 # end seed
+DEFAULT_PATH = './log.txt'
 
-def updateLog(path,dataDict):
+
+def updateLog(path, dataDict, field):
+    # check the path
+    if not path:
+        path = DEFAULT_PATH
     # get current log
-    currentDict = getLog(path)
+    currentDicts = getLog(path, field)
+    print('hello: ', currentDicts)
     # add new log to current
-    if(currentDict == None or (not currentDict)):
-        currentDict = {}
+    if (currentDicts == None or (not currentDicts)):
+        currentDicts = {}
         currentDict['input'] = []
 
-    currentDict['input'].insert(0,dataDict)
+    currentDict['input'].insert(0, dataDict)
     # save grand new mass log to txt
-    writeLog(path,currentDict)
+    writeLog(path, currentDict)
+
+    # # test
+    # for log in getLog(DEFAULT_PATH)['input']:
+    #     print('log')
+    #     print(log)
 
 
-def writeLog(path,dataDict):
+def writeLog(path, dataDict):
     try:
         with open(path, 'w', encoding="utf-8") as f:
             if dataDict != None:
-                dataJson= json.dumps(dataDict)
+                dataJson = json.dumps(dataDict)
                 f.write(dataJson + "\n")
                 print("write ok")
     except IOError as e:
@@ -47,23 +58,26 @@ def writeLog(path,dataDict):
 
 
 def getLog(path):
+    # check the path
+    if not path:
+        path = DEFAULT_PATH
     content = ""
-    contentDict = {}
+    logDict = {}
     contentJson = ""
     try:
         with open(path, 'r', encoding="utf-8") as f:
             contentJson += f.read()
-            print('contentDict', type(contentDict))
+            print('logDict', type(logDict))
             # decoding json to dictionary
-            contentDict = json.loads(contentJson)
-            print(contentDict)
-            return contentDict
+            logDict = json.loads(contentJson)
+            return logDict
     except IOError as e:
-        print(e)
+        return e
+
+
+def getCurrentLog()
+
 # print(isinstance(data,dict))
 # writeLog("./log.txt",data)
 # getLog("./log.txt")
 # updateLog('./log.txt',data)
-for log in getLog("./log.txt")['input']:
-    print('log')
-    print(log)
