@@ -24,60 +24,88 @@ import json
 DEFAULT_PATH = './log.txt'
 
 
+class Log:
+    def __init__(self):
+        self.logDicts = {
+            "input": []
+        }
+
+
 def updateLog(path, dataDict, field):
     # check the path
     if not path:
         path = DEFAULT_PATH
     # get current log
-    currentDicts = getLog(path, field)
-    print('hello: ', currentDicts)
+    logDicts = getLog(path)
     # add new log to current
-    if (currentDicts == None or (not currentDicts)):
-        currentDicts = {}
-        currentDict['input'] = []
+    if (logDicts == None or (not logDicts)):
+        logDicts = Log().logDicts
 
-    currentDict['input'].insert(0, dataDict)
+    logDicts[field].insert(0, dataDict)
     # save grand new mass log to txt
-    writeLog(path, currentDict)
-
-    # # test
-    # for log in getLog(DEFAULT_PATH)['input']:
-    #     print('log')
-    #     print(log)
+    writeLog(path, logDicts)
 
 
 def writeLog(path, dataDict):
     try:
         with open(path, 'w', encoding="utf-8") as f:
             if dataDict != None:
+                # convert dict tp json
                 dataJson = json.dumps(dataDict)
-                f.write(dataJson + "\n")
+                f.write(dataJson)
                 print("write ok")
     except IOError as e:
-        print(e)
+        print("[ERROR]Cannot read this file: ", path, "error description: ", e)
+        return None
 
 
 def getLog(path):
     # check the path
     if not path:
         path = DEFAULT_PATH
-    content = ""
-    logDict = {}
     contentJson = ""
     try:
         with open(path, 'r', encoding="utf-8") as f:
             contentJson += f.read()
-            print('logDict', type(logDict))
             # decoding json to dictionary
-            logDict = json.loads(contentJson)
-            return logDict
+            if not contentJson:
+                logDicts = Log().logDicts
+            else:
+                logDicts = json.loads(contentJson)
+        return logDicts
     except IOError as e:
-        return e
+        print("[ERROR]Cannot read this file: ", path, "error description: ", e)
+        return None
 
 
-def getCurrentLog()
+def getParticularLog(path, field):
+    logDicts = getLog(path)
+    # check whether read processing is ok
+    if not logDicts:
+        # reading fail
+        return None
+
+    try:
+        return logDicts[field]
+    except KeyError as e:
+        print('Cannot find the key: ', e)
+        return None
+
+
+def getCurrentLog(path, field):
+    try:
+        logDict = getParticularLog(path, field)
+        return logDict[0]
+    except:
+        print("Cannot get the currentLog, Please check the key in Log.txt again")
+        return None
+    # logDict is the array of dictionary
 
 # print(isinstance(data,dict))
 # writeLog("./log.txt",data)
 # getLog("./log.txt")
 # updateLog('./log.txt',data)
+
+
+# print(getParticularLog(DEFAULT_PATH, 'input'))
+# print(getCurrentLog(DEFAULT_PATH, 'input'))

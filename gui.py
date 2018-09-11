@@ -1,12 +1,25 @@
 from tkinter import *
 from app import walkthrough
-from log import updateLog , getLog
+from log import updateLog, getCurrentLog
 
 window = Tk()
 window.geometry("400x250")
 window.title("Replace Tool")
 
 CURRENT_PATH = None
+
+
+def preLoading():
+    # loading previous information
+    inputDict = getCurrentLog(CURRENT_PATH, 'input')
+    if not inputDict:
+        overwriteLog(txtLog,"Log.txt is empty!")
+    else:
+        txtPath.insert(0, inputDict['path'])
+        txtSearch.insert(0, inputDict['search'])
+        txtReplace.insert(0, inputDict['replace'])
+
+
 def overwriteLog(logObj, content):
     # clear the log
     txtLog.delete(1.0, END)
@@ -58,8 +71,7 @@ def btnReplace_Click():
     # create dict of information
     inputDict = inputLog(rootPath, searchStr, replaceStr).inputDict
     # update input log
-    updateLog(CURRENT_PATH,inputDict)
-
+    updateLog(CURRENT_PATH, inputDict, 'input')
 
 
 # make form
@@ -96,9 +108,6 @@ txtLog.grid(row=5, column=1, columnspan=2, sticky='w')
 # button
 btnReplace.grid(row=3, column=1, sticky='w')
 
-
-# loading previous information
-
-
+preLoading()
 
 window.mainloop()
