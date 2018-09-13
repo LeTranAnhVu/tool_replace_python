@@ -75,7 +75,7 @@ def getLog(path):
         return e
 
 
-def getCurrentLog()
+
 
 # print(isinstance(data,dict))
 # writeLog("./log.txt",data)
