@@ -8,8 +8,7 @@ def open_docx(path):
     return Document(path)
 
 
-oldStr = r"buitien"
-newStr = r"trang"
+
 
 
 def replace_docx(path, old_str, new_str):
@@ -61,7 +60,8 @@ def matchIndexs(str, offset, pattern):
     return itemList
 
 
-oldStr = "Tran Thi Ut"
+oldStr = "trang"
+newStr = r"Tran Thi Ut"
 doct = Document(DEFAULT_PATH)
 
 lastGapsOfWholeDoc = []
@@ -70,7 +70,7 @@ firstGapsOfWholeDoc = []
 
 def getRawRun(doc, oldStr):
     listOfNeedRunIndicesInAllDoc = []
-    for p in doc.paragraphs:
+    for ipara, p in enumerate(doc.paragraphs):
         if oldStr in p.text:
             indexs = matchIndexs(p.text, 0, oldStr)
             print('indexs: ', indexs)
@@ -102,7 +102,7 @@ def getRawRun(doc, oldStr):
                 indexOfStopRun = indexOfStartRun
                 listOfNeedRunIndices = []
                 listOfNeedRunIndices.append(indexOfStartRun)
-                lastGap = None
+                lastGap = 0
                 if templen < lenOfOldStr:
                     for irun, run in enumerate(p.runs[nextRun:]):
                         templen += len(run.text)
@@ -118,6 +118,8 @@ def getRawRun(doc, oldStr):
                 print('lastGap: ', lastGap)
                 print('listOfNeedRunIndices:', listOfNeedRunIndices)
                 lastGaps.append(lastGap)
+                # tempDict = {}
+                # tempDict[ipara]= listOfNeedRunIndices
                 listOfNeedRunIndicesInAllDoc.append(listOfNeedRunIndices)
             firstGapsOfWholeDoc.append(firstGaps)
             lastGapsOfWholeDoc.append(lastGaps)
@@ -129,8 +131,8 @@ print("listOfNeedRunIndicesInAllDoc: ", listOfNeedRunIndicesInAllDoc)
 print("firstGapsOfWholeDoc: ", firstGapsOfWholeDoc)
 print("lastGapsOfWholeDoc: ", lastGapsOfWholeDoc)
 
-lastGap = lastGapsOfWholeDoc[1][0]
-firstGap = firstGapsOfWholeDoc[1][0]
+lastGap = lastGapsOfWholeDoc[0][0]
+firstGap = firstGapsOfWholeDoc[0][0]
 print("<<<<lastGap:", lastGap)
 print("<<<<firstGap:", firstGap)
 
@@ -138,18 +140,64 @@ print("<<<<firstGap:", firstGap)
 def replaceString(doc, old_str, new_str, listOfNeedRunIndices, firstGap, lastGap):
     # delete all the middle runs
     runs = doc.paragraphs[-1].runs
-    for i in listOfNeedRunIndices[1:-1]:
-        print(">>>>>i:", i)
-        runs[i].text = ""
-    # filter the last run
-    lenOfStringInLastRun = len(runs[listOfNeedRunIndices[-1]])
-    indexOfCharInLastRun = lenOfStringInLastRun - lastGap - 1
-    if(indexOfCharInLastRun < 0):
-        print("there is some problem in replaceString function ")
-        return None
+    if len(listOfNeedRunIndices) > 1 :
+        for irun, run in enumerate(runs):
+            print(">>>>",irun)
+            print(run.text)
+            print("<<<<")
+        for i in listOfNeedRunIndices[1:-1]:
+            print(">>>>>i:", i)
+            runs[i].text = ""
+        print('hey:','|'+runs[1].text+'|')
+        # filter the last run
+        lenOfStringInLastRun = len(runs[listOfNeedRunIndices[-1]].text)
+        print("lenOfStringInLastRun: ", lenOfStringInLastRun)
+        indexOfCharInLastRun = lenOfStringInLastRun - lastGap - 1
+
+        if (indexOfCharInLastRun < 0):
+            print("there is some problem in replaceString function, indexOfCharInLastRun < 0 ")
+            return None
+        print('indexOfCharInLastRun:', indexOfCharInLastRun)
+        if lenOfStringInLastRun == 1:
+            # special case
+            runs[listOfNeedRunIndices[-1]].text = ""
+        else:
+            runs[listOfNeedRunIndices[-1]].text = runs[listOfNeedRunIndices[-1]].text[indexOfCharInLastRun + 1:]
+
+        # replace the first run
+
+        lenOfStringInFirstRun = len(runs[listOfNeedRunIndices[0]].text)
+        print("text: ", runs[1].text)
+        indexOfCharInFirstRun = lenOfStringInFirstRun - firstGap - 1
+        print('indexOfCharInFirstRun:', indexOfCharInFirstRun)
+        if (indexOfCharInFirstRun < 0):
+            print("there is some problem in replaceString function : indexOfCharInFirstRun < 0 ")
+            return None
+        if indexOfCharInFirstRun == 0:
+            runs[listOfNeedRunIndices[0]].text = new_str
+        else:
+            temp = runs[listOfNeedRunIndices[0]].text[:indexOfCharInFirstRun]
+            temp += new_str
+            runs[listOfNeedRunIndices[0]].text = temp
+    else:
+        # length of listOfNeedRunIndices is 1, mean that
+        lenOfStringInFirstRun = len(runs[listOfNeedRunIndices[0]].text)
+        print("text: ", runs[1].text)
+        indexOfCharInFirstRun = lenOfStringInFirstRun - firstGap - 1
+        print('indexOfCharInFirstRun:', indexOfCharInFirstRun)
+        if (indexOfCharInFirstRun < 0):
+            print("there is some problem in replaceString function : indexOfCharInFirstRun < 0 ")
+            return None
+        if indexOfCharInFirstRun == 0:
+            runs[listOfNeedRunIndices[0]].text = new_str
+        else:
+            temp = runs[listOfNeedRunIndices[0]].text[:indexOfCharInFirstRun]
+            temp += new_str
+            runs[listOfNeedRunIndices[0]].text = temp
+
+    doc.save('.\sample\ex2.docx')
 
 
-    # replace the first run
 
 
 replaceString(doct, oldStr, newStr, listOfNeedRunIndicesInAllDoc[-1], firstGap, lastGap)
