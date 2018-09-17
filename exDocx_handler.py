@@ -19,6 +19,28 @@ class MatchedRunObj:
 
     def findRelatedRunIndex(self):
         # do something to ...
+        lenOldStr = len(self.oldStr)
+        # find the first run that contain the matched oldstring
+        indexOfCharInWholeRun = -1
+        indexOfFirstRun =0
+        if self.matchedIndex == 0:
+            indexOfFirstRun = 0
+        elif self.matchedIndex > 0:
+            for i_run, run in enumerate(self.p.runs):
+                indexOfCharInWholeRun += len(run.text)
+                if indexOfCharInWholeRun >= self.matchedIndex:
+                    # find out the index first run
+                    indexOfFirstRun = i_run
+                    break
+        else :
+            print("error, matched index < 0")
+
+        # find the last run that contain the matched oldstring
+
+        for i_run, run in enumerate(self.p.runs[indexOfFirstRun:]):
+            # search from the first matched run
+
+
         return self.listOfIndexOfRun
 
     def findFirstCharMatchedIndex(self):
