@@ -11,48 +11,123 @@ class MatchedRunObj:
         self.oldStr = oldStr
         self.newStr = newStr
         self.listOfIndexOfRun = []
+        self.indexOfFirstRun = None
+        self.indexOfLastRun = None
         # indexOfFirstMatchedChar is the position of the first character-in oldStr in the first Run obj in Run Objlist
         self.indexOfFirstMatchedChar = None
+        self.firstOffset = None
 
         # indexOfLastMatchedChar is the position of the last character-in oldStr in the last Run obj in Run Objlist
         self.indexOfLastMatchedChar = None
+        self.lastOffset = None
 
     def findRelatedRunIndex(self):
         # do something to ...
         lenOldStr = len(self.oldStr)
+        matchedIndex = self.matchedIndex
+        # print("#####matchedIndex:",matchedIndex )
         # find the first run that contain the matched oldstring
         indexOfCharInWholeRun = -1
-        indexOfFirstRun =0
-        if self.matchedIndex == 0:
+        indexOfFirstRun = 0
+        if matchedIndex == 0:
             indexOfFirstRun = 0
-        elif self.matchedIndex > 0:
+        elif matchedIndex > 0:
             for i_run, run in enumerate(self.p.runs):
                 indexOfCharInWholeRun += len(run.text)
-                if indexOfCharInWholeRun >= self.matchedIndex:
+                if indexOfCharInWholeRun >= matchedIndex:
                     # find out the index first run
                     indexOfFirstRun = i_run
                     break
-        else :
+        else:
             print("error, matched index < 0")
 
+        # find the first character position in the first run obj
+        print("#####indexOfFirstRun:", indexOfFirstRun)
+        indexOfFirstMatchedChar = self.findFirstCharMatchedIndex(indexOfFirstRun, indexOfCharInWholeRun, matchedIndex)[
+            0]
+        firstRun = self.p.runs[indexOfFirstRun]
+        traveledCharLen = len(firstRun.text[indexOfFirstMatchedChar:])
         # find the last run that contain the matched oldstring
-
-        for i_run, run in enumerate(self.p.runs[indexOfFirstRun:]):
-            # search from the first matched run
-
-
+        iNextRun = indexOfFirstRun + 1
+        indexOfLastRun = indexOfFirstRun
+        if traveledCharLen < lenOldStr:
+            for i_run, run in enumerate(self.p.runs[iNextRun:]):
+                # search from the first matched run
+                traveledCharLen += len(run.text)
+                if traveledCharLen >= lenOldStr:
+                    indexOfLastRun = iNextRun + i_run
+                    break
+        else:
+            pass  # do nothing
+        self.findLastCharMatchedIndex(indexOfLastRun, traveledCharLen, lenOldStr)
+        self.indexOfFirstRun = indexOfFirstRun
+        self.indexOfLastRun  = indexOfLastRun
         return self.listOfIndexOfRun
 
-    def findFirstCharMatchedIndex(self):
+    def findFirstCharMatchedIndex(self, iFirstRun, indexOfCharInWholeRun, matchedIndex):
         # do something to ...
-        return self.indexOfFirstMatchedChar
+        lenOfFirstRun = len(self.p.runs[iFirstRun].text)
+        offset = indexOfCharInWholeRun - matchedIndex
+        self.indexOfFirstMatchedChar = lenOfFirstRun - offset - 1
+        self.firstOffset = offset
+        return [self.indexOfFirstMatchedChar, self.firstOffset]
 
-    def findLastCharMatchedIndex(self):
+    def findLastCharMatchedIndex(self, iLastRun, traveledCharLen, lenOldStr):
         # do something to ...
-        return self.indexOfLastMatchedChar
+        lenOfLastRun = len(self.p.runs[iLastRun].text)
+        offset = traveledCharLen - lenOldStr
+        self.indexOfLastMatchedChar = lenOfLastRun - offset - 1
+        self.lastOffset = offset
+        return [self.indexOfLastMatchedChar, self.lastOffset]
 
     def replaceString(self):
         # do something to ...
+        iFirstRun = self.indexOfLastRun
+        iLastRun = self.indexOfFirstRun
+        numbOfRun = iLastRun - iFirstRun + 1
+        print(">>>>")
+        print("iFirstRun: ",iFirstRun)
+        print("iLastRun: ", iLastRun)
+        print("numbOfRun: ", numbOfRun)
+        print("<<<<")
+        if numbOfRun == 1:
+            # replace to newstring
+            self.p.runs[iFirstRun].text = self.p.runs[iFirstRun].text.replace(self.oldStr, self.newStr)
+        elif numbOfRun == 2:
+            # replace to newstring
+            pieceOfStr = self.p.runs[iFirstRun].text[self.indexOfFirstMatchedChar:]
+            self.p.runs[iFirstRun].text = self.p.runs[iFirstRun].text.replace(pieceOfStr, self.newStr)
+
+            # remove the rest of oldstring in the 2nd run
+            lenOfLastRun = len(self.p.runs[iLastRun].text)
+            if (lenOfLastRun - 1) > self.indexOfLastMatchedChar:
+                self.p.runs[iLastRun].text = self.p.runs[iLastRun].text[
+                                                        (self.indexOfLastMatchedChar + 1):]
+            elif (lenOfLastRun - 1) == self.indexOfLastMatchedChar:
+                self.p.runs[iLastRun].text = ""
+            else:
+                print("error:(lenOfLastRun - 1) < self.indexOfLastMatchedChar ")
+
+        elif numbOfRun > 2:
+            # remove the text of all between runs
+            for run in self.p.runs[iFirstRun + 1: iLastRun]:
+                run.text = ""
+            # replace to newstring
+            pieceOfStr = self.p.runs[iFirstRun].text[self.indexOfFirstMatchedChar:]
+            self.p.runs[iFirstRun].text = self.p.runs[iFirstRun].text.replace(pieceOfStr, self.newStr)
+
+            # remove the rest of oldstring in the 2nd run
+            lenOfLastRun = len(self.p.runs[iLastRun].text)
+            if (lenOfLastRun - 1) > self.indexOfLastMatchedChar:
+                self.p.runs[iLastRun].text = self.p.runs[iLastRun].text[
+                                             (self.indexOfLastMatchedChar + 1):]
+            elif (lenOfLastRun - 1) == self.indexOfLastMatchedChar:
+                self.p.runs[iLastRun].text = ""
+            else:
+                print("error:(lenOfLastRun - 1) < self.indexOfLastMatchedChar ")
+
+        else:
+            print("error, numbOfRun < 0")
         return True
 
 
@@ -87,11 +162,28 @@ def replace_docx(path, old_str, new_str):
                     # make the instance of matchedRunObj
                     matchedObj = MatchedRunObj(para, matchIndex, old_str, new_str)
                     matchedObj.findRelatedRunIndex()
-                    matchedObj.findFirstCharMatchedIndex()
-                    matchedObj.findLastCharMatchedIndex()
+                    print("indexOfFirstMatchedChar: ", matchedObj.indexOfFirstMatchedChar)
+                    print("indexOfLastMatchedChar: ", matchedObj.indexOfLastMatchedChar)
                     matchedObj.replaceString()
+                    doc.save('.\sample\ex2.docx')
         # save file in here
+
     except AttributeError as e:
         errorObj = ErrorHandler(path, e)
         errorObj.showError()
         return errorObj
+
+def show (path):
+    doc = open_docx(path)
+    for p in doc.paragraphs:
+        for irun, run in enumerate(p.runs):
+            print("===:"+str(irun)+":=================")
+            print("|"+run.text+"|")
+            print("====================")
+
+
+oStr = "Tran Thi Ut"
+nStr = "Pham Thi Thu Trang"
+show(DEFAULT_PATH)
+replace_docx(DEFAULT_PATH,oStr, nStr )
+
