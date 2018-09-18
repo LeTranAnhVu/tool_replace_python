@@ -31,6 +31,7 @@ class MatchedRunObj:
         indexOfFirstRun = 0
         if matchedIndex == 0:
             indexOfFirstRun = 0
+            indexOfCharInWholeRun += len(self.p.runs[indexOfFirstRun].text)
         elif matchedIndex > 0:
             for i_run, run in enumerate(self.p.runs):
                 indexOfCharInWholeRun += len(run.text)
@@ -61,7 +62,7 @@ class MatchedRunObj:
             pass  # do nothing
         self.findLastCharMatchedIndex(indexOfLastRun, traveledCharLen, lenOldStr)
         self.indexOfFirstRun = indexOfFirstRun
-        self.indexOfLastRun  = indexOfLastRun
+        self.indexOfLastRun = indexOfLastRun
         return self.listOfIndexOfRun
 
     def findFirstCharMatchedIndex(self, iFirstRun, indexOfCharInWholeRun, matchedIndex):
@@ -82,11 +83,11 @@ class MatchedRunObj:
 
     def replaceString(self):
         # do something to ...
-        iFirstRun = self.indexOfLastRun
-        iLastRun = self.indexOfFirstRun
+        iFirstRun = self.indexOfFirstRun
+        iLastRun = self.indexOfLastRun
         numbOfRun = iLastRun - iFirstRun + 1
         print(">>>>")
-        print("iFirstRun: ",iFirstRun)
+        print("iFirstRun: ", iFirstRun)
         print("iLastRun: ", iLastRun)
         print("numbOfRun: ", numbOfRun)
         print("<<<<")
@@ -102,7 +103,7 @@ class MatchedRunObj:
             lenOfLastRun = len(self.p.runs[iLastRun].text)
             if (lenOfLastRun - 1) > self.indexOfLastMatchedChar:
                 self.p.runs[iLastRun].text = self.p.runs[iLastRun].text[
-                                                        (self.indexOfLastMatchedChar + 1):]
+                                             (self.indexOfLastMatchedChar + 1):]
             elif (lenOfLastRun - 1) == self.indexOfLastMatchedChar:
                 self.p.runs[iLastRun].text = ""
             else:
@@ -154,36 +155,60 @@ def replace_docx(path, old_str, new_str):
         return ErrorHandler(path, e)
     # replace the string
     try:
-        for i, para in enumerate(doc.paragraphs):
+        # paragraph processing
+        for para in doc.paragraphs:
             # each para call  matchIndexs
             if old_str in para.text:
                 matchedIndices = findMatchedIndices(para.text, 0, old_str)
-                for matchIndex in matchedIndices:
+                for i_matchIndex, matchIndex in enumerate(matchedIndices):
                     # make the instance of matchedRunObj
-                    matchedObj = MatchedRunObj(para, matchIndex, old_str, new_str)
+                    diff = len(new_str) - len(old_str)
+                    updatedMatchedIndex = i_matchIndex * diff + matchIndex
+                    matchedObj = MatchedRunObj(para, updatedMatchedIndex, old_str, new_str)
                     matchedObj.findRelatedRunIndex()
                     print("indexOfFirstMatchedChar: ", matchedObj.indexOfFirstMatchedChar)
                     print("indexOfLastMatchedChar: ", matchedObj.indexOfLastMatchedChar)
                     matchedObj.replaceString()
-                    doc.save('.\sample\ex2.docx')
-        # save file in here
 
+        # table processing
+        for i_table, table in doc.tables:
+            print("===:" + str(i_table) + ":=================")
+            for p in table.paragraphs:
+                print(p.text)
+            print("====================")
+
+        # save file in here
+        doc.save('.\sample\ex2.docx')
     except AttributeError as e:
         errorObj = ErrorHandler(path, e)
         errorObj.showError()
         return errorObj
 
-def show (path):
+
+def show(path):
     doc = open_docx(path)
     for p in doc.paragraphs:
         for irun, run in enumerate(p.runs):
-            print("===:"+str(irun)+":=================")
-            print("|"+run.text+"|")
+            print("===:" + str(irun) + ":=================")
+            print("|" + run.text + "|")
             print("====================")
 
+def showParagraph(path):
+    doc = open_docx(path)
+    for ip , p in enumerate(doc.paragraphs):
+        print(">>>:" + str(ip) + ":>>>>>>>>>>>>>")
+        print(p.text)
+        print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
-oStr = "Tran Thi Ut"
+
+def travesalTable(path):
+    doc = open_docx(path)
+    for i_table, table in enumerate(doc.tables):
+        print("test")
+oStr = "Lara"
 nStr = "Pham Thi Thu Trang"
-show(DEFAULT_PATH)
-replace_docx(DEFAULT_PATH,oStr, nStr )
+# show(DEFAULT_PATH)
+# replace_docx(DEFAULT_PATH, oStr, nStr)
+# showParagraph(DEFAULT_PATH)
 
+travesalTable(DEFAULT_PATH)
