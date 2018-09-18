@@ -171,11 +171,23 @@ def replace_docx(path, old_str, new_str):
                     matchedObj.replaceString()
 
         # table processing
-        for i_table, table in doc.tables:
-            print("===:" + str(i_table) + ":=================")
-            for p in table.paragraphs:
-                print(p.text)
-            print("====================")
+        for table in doc.tables:
+            for  r in table.rows:
+                for cell in r.cells:
+                    for para in cell.paragraphs:
+                        if old_str in para.text:
+                            matchedIndices = findMatchedIndices(para.text, 0, old_str)
+                            for i_matchIndex, matchIndex in enumerate(matchedIndices):
+                                # make the instance of matchedRunObj
+                                diff = len(new_str) - len(old_str)
+                                updatedMatchedIndex = i_matchIndex * diff + matchIndex
+                                matchedObj = MatchedRunObj(para, updatedMatchedIndex, old_str, new_str)
+                                matchedObj.findRelatedRunIndex()
+                                print("indexOfFirstMatchedChar: ", matchedObj.indexOfFirstMatchedChar)
+                                print("indexOfLastMatchedChar: ", matchedObj.indexOfLastMatchedChar)
+                                matchedObj.replaceString()
+        #heading processing
+
 
         # save file in here
         doc.save('.\sample\ex2.docx')
@@ -204,11 +216,22 @@ def showParagraph(path):
 def travesalTable(path):
     doc = open_docx(path)
     for i_table, table in enumerate(doc.tables):
-        print("test")
+        for i_row, r in enumerate(table.rows):
+            for cell in r.cells:
+                for p in cell.paragraphs:
+                    print("hello")
+
+def readHeader(path):
+    doc = open_docx(path)
+    for section in doc.sections:
+        print(dir(section))
+        # for header in section.header:
+        #     print(dir(header))
 oStr = "Lara"
 nStr = "Pham Thi Thu Trang"
 # show(DEFAULT_PATH)
 # replace_docx(DEFAULT_PATH, oStr, nStr)
 # showParagraph(DEFAULT_PATH)
 
-travesalTable(DEFAULT_PATH)
+# travesalTable(DEFAULT_PATH)
+# readHeader(DEFAULT_PATH)
