@@ -227,6 +227,7 @@ def readHeader(path):
         print(dir(section))
         # for header in section.header:
         #     print(dir(header))
+    doc.save(path)
 oStr = "Lara"
 nStr = "Pham Thi Thu Trang"
 # show(DEFAULT_PATH)
@@ -235,3 +236,17 @@ nStr = "Pham Thi Thu Trang"
 
 # travesalTable(DEFAULT_PATH)
 # readHeader(DEFAULT_PATH)
+
+import zipfile
+
+document = zipfile.ZipFile(".\sample\ex11.docx")
+print(dir(document))
+for xml in document.filelist:
+    # print((xml.filename))
+    if "header" in xml.filename:
+        read = document.read(xml.filename)
+        newstr = read.decode().replace("Lara", "LeTranAnhVu")
+        print(newstr)
+# ['NameToInfo', '_RealGetContents', '__class__', '__del__', '__delattr__', '__dict__', '__dir__', '__doc__', '__enter__', '__eq__', '__exit__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_allowZip64', '_comment', '_didModify', '_extract_member', '_filePassed', '_fileRefCnt', '_fpclose', '_lock', '_open_to_write', '_sanitize_windows_name', '_seekable', '_windows_illegal_name_trans_table', '_write_end_record', '_writecheck', '_writing', 'close', 'comment', 'compression', 'compresslevel', 'debug', 'extract', 'extractall', 'filelist', 'filename', 'fp', 'getinfo', 'infolist', 'mode', 'namelist', 'open', 'printdir', 'pwd', 'read', 'setpassword', 'start_dir', 'testzip', 'write', 'writestr']
+
+# ['CRC', 'FileHeader', '__class__', '__delattr__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__slots__', '__str__', '__subclasshook__', '_compresslevel', '_decodeExtra', '_encodeFilenameFlags', '_raw_time', 'comment', 'compress_size', 'compress_type', 'create_system', 'create_version', 'date_time', 'external_attr', 'extra', 'extract_version', 'file_size', 'filename', 'flag_bits', 'from_file', 'header_offset', 'internal_attr', 'is_dir', 'orig_filename', 'reserved', 'volume']
