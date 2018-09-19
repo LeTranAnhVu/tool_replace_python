@@ -155,7 +155,8 @@ def replace_docx(path, old_str, new_str):
         return ErrorHandler(path, e)
     # replace the string
     try:
-        for i, para in enumerate(doc.paragraphs):
+        # paragraph processing
+        for para in doc.paragraphs:
             # each para call  matchIndexs
             if old_str in para.text:
                 matchedIndices = findMatchedIndices(para.text, 0, old_str)
@@ -168,9 +169,27 @@ def replace_docx(path, old_str, new_str):
                     print("indexOfFirstMatchedChar: ", matchedObj.indexOfFirstMatchedChar)
                     print("indexOfLastMatchedChar: ", matchedObj.indexOfLastMatchedChar)
                     matchedObj.replaceString()
-                    doc.save('.\sample\ex2.docx')
-        # save file in here
 
+        # table processing
+        for table in doc.tables:
+            for r in table.rows:
+                for cell in r.cells:
+                    for para in cell.paragraphs:
+                        if old_str in para.text:
+                            matchedIndices = findMatchedIndices(para.text, 0, old_str)
+                            for i_matchIndex, matchIndex in enumerate(matchedIndices):
+                                # make the instance of matchedRunObj
+                                diff = len(new_str) - len(old_str)
+                                updatedMatchedIndex = i_matchIndex * diff + matchIndex
+                                matchedObj = MatchedRunObj(para, updatedMatchedIndex, old_str, new_str)
+                                matchedObj.findRelatedRunIndex()
+                                print("indexOfFirstMatchedChar: ", matchedObj.indexOfFirstMatchedChar)
+                                print("indexOfLastMatchedChar: ", matchedObj.indexOfLastMatchedChar)
+                                matchedObj.replaceString()
+        # heading processing
+
+        # save file in here
+        doc.save('.\sample\ex2.docx')
     except AttributeError as e:
         errorObj = ErrorHandler(path, e)
         errorObj.showError()
