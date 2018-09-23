@@ -1,19 +1,26 @@
 import os
-import excel_handler
-import text_handler
-
-open_text_and_replace = text_handler.open_text_and_replace
-open_excel_and_replace = excel_handler.open_excel_and_replace
+from excel_handler import open_excel_and_replace
+from text_handler import open_text_and_replace
+from  docx_handler import open_docx_and_replace
 
 
 # new_str = "ti"
 # old_str = "teo"
 # base_path = r".\sample"
+# list_handlers = {
+#     # "docx" : open_text_and_replace,
+#     "txt": open_text_and_replace,
+#     "xls": open_excel_and_replace,
+#     "xlsx": open_excel_and_replace,
+#     "docx": open_docx_and_replace
+# }
+
 list_handlers = {
     # "docx" : open_text_and_replace,
-    "txt": open_text_and_replace,
+    # "txt": open_text_and_replace,
     "xls": open_excel_and_replace,
-    "xlsx": open_excel_and_replace
+    "xlsx": open_excel_and_replace,
+    # "docx": open_docx_and_replace
 }
 
 
@@ -41,9 +48,10 @@ def walkthrough(base_path, old_str, new_str):
                 list_handlers[extension](file_path, old_str, new_str)
             except KeyError:
                 print("key not found")
-            new_file = replace_name(root, file, old_str, new_str)
-            print("new file: ", new_file)
+            if old_str in file:
+                new_file = replace_name(root, file, old_str, new_str)
+                print("new file: ", new_file)
             # update new fd name
-            files[files.index(file)] = new_file
+                files[files.index(file)] = new_file
 
 # walkthrough(base_path,old_str,new_str)
