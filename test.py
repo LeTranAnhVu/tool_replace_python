@@ -105,28 +105,28 @@ print("xml: |" + xml)
 import tempfile
 import shutil
 import os
-
-
-def remove_from_zip(zipfname, filenames):
-    tempdir = tempfile.mkdtemp()
-    print('tempdir|' + tempdir)
-    try:
-        tempname = os.path.join(tempdir, 'new.zip')
-        with zipfile.ZipFile(zipfname, 'r') as zipread:
-            with zipfile.ZipFile(tempname, 'w') as zipwrite:
-                for item in zipread.infolist():
-                    if item.filename not in filenames:
-                        data = zipread.read(item.filename)
-                        zipwrite.writestr(item, data)
-        shutil.move(tempname, zipfname)
-    finally:
-        shutil.rmtree(tempdir)
-
-
 #
-remove_from_zip('./sample/ex2.docx', 'word/header1.xml')
-with zipfile.ZipFile('./sample/ex2.docx', 'a') as z:
-    z.write(xml, arcname='word/header1.xml')
+#
+# def remove_from_zip(zipfname, filenames):
+#     tempdir = tempfile.mkdtemp()
+#     print('tempdir|' + tempdir)
+#     try:
+#         tempname = os.path.join(tempdir, 'new.zip')
+#         with zipfile.ZipFile(zipfname, 'r') as zipread:
+#             with zipfile.ZipFile(tempname, 'w') as zipwrite:
+#                 for item in zipread.infolist():
+#                     if item.filename not in filenames:
+#                         data = zipread.read(item.filename)
+#                         zipwrite.writestr(item, data)
+#         shutil.move(tempname, zipfname)
+#     finally:
+#         shutil.rmtree(tempdir)
+#
+#
+# #
+# remove_from_zip('./sample/ex2.docx', 'word/header1.xml')
+# with zipfile.ZipFile('./sample/ex2.docx', 'a') as z:
+#     z.write(xml, arcname='word/header1.xml')
 
 # GOOD
 # import xmltodict
@@ -149,3 +149,24 @@ with zipfile.ZipFile('./sample/ex2.docx', 'a') as z:
 #
 # with open(xml,'w')as file:
 #     file.write(text)
+
+
+
+
+class Employee:
+    def __init__(self, first, last ,age):
+        self._first = first
+        self._last = last
+        self._age = age
+    def __str__(self):
+        return ('{}-{}-{}'.format(self._first, self._last, self._age))
+    @property
+    def fullname(self):
+        return '{} {}'.format(self._first, self._last)
+    @property
+    def first(self):
+        return self._first
+    @first.setter
+    def first(self,first):
+        self._first = first
+        return self._first
