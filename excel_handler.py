@@ -10,6 +10,9 @@ except ImportError:
 
 def open_excel_and_replace(path, old_str, new_str):
     wb = openpyxl.load_workbook(path)
+    print(">>>>>>>>")
+    print("wb",wb)
+    print("<<<<<<<<<")
     for sheet in wb:
         max_col = get_column_letter(sheet.max_column)
         max_row = str(sheet.max_row)
@@ -19,7 +22,7 @@ def open_excel_and_replace(path, old_str, new_str):
         searchFromAToBAndDo("A1", lastcell, replaceStringInCell, params, sheet)
         # print(sheet['A1'].value)
 
-        wb.save(".\sample\data2.xlsx")
+        wb.save(path)
 
 
 def replaceStringInCell(cell, params):

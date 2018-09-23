@@ -22,14 +22,14 @@ def preLoading():
 
 def overwriteLog(logObj, content):
     # clear the log
-    txtLog.delete(1.0, END)
+    logObj.delete(1.0, END)
     # insert new content to log
-    txtLog.insert(END, str(content) + '\n')
+    logObj.insert(END, str(content) + '\n')
 
 
 def nonOverwriteLog(logObj, content):
     # insert new content to log right behind the previous content
-    txtLog.insert(END, str(content) + '\n')
+    logObj.insert(END, str(content) + '\n')
 
 
 class inputLog:
@@ -63,7 +63,7 @@ def btnReplace_Click():
     replaceStr = txtReplace.get()
 
     # search and replace
-    # walkthrough(rootPath, searchStr, replaceStr)
+    walkthrough(rootPath, searchStr, replaceStr)
 
     nonOverwriteLog(txtLog, "finished!")
 

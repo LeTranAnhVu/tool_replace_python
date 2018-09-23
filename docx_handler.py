@@ -147,7 +147,7 @@ def open_docx(path):
     return Document(path)
 
 
-def replace_docx(path, old_str, new_str):
+def open_docx_and_replace(path, old_str, new_str):
     doc = open_docx(path)
     # check none
     if not isinstance(old_str, str) or not isinstance(new_str, str):
@@ -189,7 +189,7 @@ def replace_docx(path, old_str, new_str):
         # heading processing
 
         # save file in here
-        doc.save('.\sample\ex2.docx')
+        doc.save(path)
     except AttributeError as e:
         errorObj = ErrorHandler(path, e)
         errorObj.showError()
@@ -211,8 +211,7 @@ def showParagraph(path):
         print(p.text)
         print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
-oStr = "Lara"
-nStr = "Pham Thi Thu Trang"
+
 # show(DEFAULT_PATH)
 # replace_docx(DEFAULT_PATH, oStr, nStr)
 # showParagraph(DEFAULT_PATH)
