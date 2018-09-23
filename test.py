@@ -105,6 +105,8 @@ print("xml: |" + xml)
 import tempfile
 import shutil
 import os
+
+
 #
 #
 # def remove_from_zip(zipfname, filenames):
@@ -151,22 +153,27 @@ import os
 #     file.write(text)
 
 
-
-
 class Employee:
-    def __init__(self, first, last ,age):
+    def __init__(self, first, last, age):
         self._first = first
         self._last = last
         self._age = age
+
     def __str__(self):
         return ('{}-{}-{}'.format(self._first, self._last, self._age))
+
     @property
     def fullname(self):
         return '{} {}'.format(self._first, self._last)
+
     @property
     def first(self):
         return self._first
+
     @first.setter
-    def first(self,first):
+    def first(self, first):
         self._first = first
         return self._first
+
+
+
