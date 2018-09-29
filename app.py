@@ -3,6 +3,8 @@ from excel_handler import open_excel_and_replace
 from text_handler import open_text_and_replace
 from  docx_handler import open_docx_and_replace
 
+TESTMODE = True
+
 
 # new_str = "ti"
 # old_str = "teo"
@@ -54,4 +56,3 @@ def walkthrough(base_path, old_str, new_str):
             # update new fd name
                 files[files.index(file)] = new_file
 
-# walkthrough(base_path,old_str,new_str)
