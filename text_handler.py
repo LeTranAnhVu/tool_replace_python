@@ -1,5 +1,3 @@
-import os
-from docx import Document
 
 
 def open_text_and_replace(path, old_str, new_str):
